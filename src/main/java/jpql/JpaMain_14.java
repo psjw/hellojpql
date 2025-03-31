@@ -42,7 +42,8 @@ public class JpaMain_14 {
 
 //            String query = "select m.username from Member m" ;
 //            String query = "select m.team from Member m" ; //묵시적 inner join (단일 값 연관 경로)
-            String query = "select t.members from Team t" ; //컬렉션 값 연관경로(탐색 X)
+//            String query = "select t.members from Team t" ; //컬렉션 값 연관경로(탐색 X)
+            String query = "select m.username from Team t join t.members m" ; //
 
             List<Object> result = em.createQuery(query)
                     .getResultList();
