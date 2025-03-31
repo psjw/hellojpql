@@ -1,10 +1,14 @@
 package jpql;
 
-import jakarta.persistence.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.Persistence;
 
 import java.util.List;
+import java.util.Objects;
 
-public class JpaMain {
+public class JpaMain_9 {
     public static void main(String[] args) {
 
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
@@ -13,22 +17,33 @@ public class JpaMain {
         tx.begin();
         //code
         try {
+            Team team = new Team();
+            team.setName("teamA");
+            em.persist(team);
+
             Member member = new Member();
-            member.setUsername("member1");
+            member.setUsername("teamA");
             member.setAge(10);
+            member.changeTeam(team);
+            member.setType(MemberType.ADMIN);
+
             em.persist(member);
 
-            TypedQuery<Member> query = em.createQuery("select m from Member m", Member.class);
-//            TypedQuery<String> query1 = em.createQuery("select m.username from Member m", String.class); //타입 이명확 TypeQuery사용
-//            Query query3 = em.createQuery("select m.username, m.age from Member m"); //타입이 명확하지 않음 Query 사용
-            Member result = query.getSingleResult();
-            //Spring Data JPA -> Optionaexl 반환
-            System.out.println("result = " + result);
 
-            List<Member> resultList = query.getResultList();
+            em.flush();
+            em.clear();
 
-            for (Member member1 : resultList) {
-                System.out.println("member1 = " + member1);
+            String query = "select m.username, 'HELLO', TRUE from Member m " +
+//                    "where m.type = jpql.MemberType.ADMIN ";
+                    "where m.type = :userType " ;
+            List<Object[]> result = em.createQuery(query)
+                    .setParameter("userType", MemberType.ADMIN)
+                    .getResultList();
+            System.out.println("result.size() = " + result.size());
+            for (Object[] objects : result) {
+                System.out.println("objects = " + objects[0]);
+                System.out.println("objects = " + objects[1]);
+                System.out.println("objects = " + objects[2]);
             }
 
             tx.commit();
