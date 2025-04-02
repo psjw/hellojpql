@@ -7,6 +7,7 @@ import jakarta.persistence.OneToMany;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 public class Team {
@@ -17,6 +18,7 @@ public class Team {
 
     private String name;
 
+//    @BatchSize(size = 10) // Lazy Loading 시, 10개씩 가져옴(최대 1000이하로) -> persistence.xml에 글로벌설정으로함
     @OneToMany(mappedBy = "team")
     private List<Member> members = new ArrayList<>();
 
